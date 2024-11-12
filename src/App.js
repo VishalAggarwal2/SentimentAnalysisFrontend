@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Bar } from 'react-chartjs-2';
-import { Pie } from 'react-chartjs-2'; // Import Pie chart
-import Chart from 'chart.js/auto'; // Import chart.js for chart rendering
+import { Pie } from 'react-chartjs-2';
+import Chart from 'chart.js/auto';
 import './App.css'; // Custom CSS for themes and UI improvements
 
 const App = () => {
@@ -22,19 +22,17 @@ const App = () => {
     ],
   });
   
-  const [isDarkMode, setIsDarkMode] = useState(true); // For toggling themes
-  const [filter, setFilter] = useState('All'); // Filter for sentiments (All, Positive, Negative, Neutral)
+  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [filter, setFilter] = useState('All');
 
-  // Toggle dark/light theme
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
   };
 
-  // Handle form submission
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
-    setErrorMessage(''); // Clear any previous errors
+    setErrorMessage('');
 
     try {
       const response = await fetch('https://backendsentimentanalysis.onrender.com/generate_report', {
@@ -50,20 +48,16 @@ const App = () => {
       }
 
       const data = await response.json();
-
-      // Set sentiment report and verdicts
-      setSentimentReport(data.data); // Assuming 'data' contains sentiment_report
+      setSentimentReport(data.data);
       setFinalVerdict(data.verdict);
       setDetailedVerdict(data.detailed_verdict);
 
-      // Ensure sentiment_report is an array before using reduce
       if (Array.isArray(data.data)) {
         const sentimentCounts = data.data.reduce((acc, { sentiment }) => {
           acc[sentiment] = (acc[sentiment] || 0) + 1;
           return acc;
         }, {});
 
-        // Update chart data for both Bar and Pie charts
         setChartData({
           labels: ['Positive', 'Negative', 'Neutral'],
           datasets: [
@@ -90,12 +84,10 @@ const App = () => {
     }
   };
 
-  // Handle filter change
   const handleFilterChange = (sentiment) => {
     setFilter(sentiment);
   };
 
-  // Filter sentiment report based on selected sentiment
   const filteredSentimentReport = sentimentReport.filter((item) => {
     if (filter === 'All') return true;
     return item.sentiment === filter;
@@ -104,70 +96,69 @@ const App = () => {
   return (
     <div className={`app-container ${isDarkMode ? 'dark' : ''}`}>
       <header className="header">
-        <h1>Sentiment Analysis</h1>
+        <h1 className="title">Sentiment Analysis</h1>
         <button className="theme-toggle" onClick={toggleTheme}>
           {isDarkMode ? 'Light Mode' : 'Dark Mode'}
         </button>
       </header>
 
-      <form onSubmit={handleSubmit} className="form">
-        <textarea
-          value={statement}
-          onChange={(e) => setStatement(e.target.value)}
-          placeholder="Enter the text for sentiment analysis"
-          rows="6"
-          cols="50"
-          className="textarea"
-        />
-        <button type="submit" disabled={loading} className="submit-btn">
-          {loading ? 'Generating Report...' : 'Generate Report'}
-        </button>
-      </form>
+      <main className="main-content">
+        <form onSubmit={handleSubmit} className="form">
+          <textarea
+            value={statement}
+            onChange={(e) => setStatement(e.target.value)}
+            placeholder="Enter the text for sentiment analysis"
+            rows="6"
+            cols="50"
+            className="textarea"
+          />
+          <button type="submit" disabled={loading} className="submit-btn">
+            {loading ? 'Generating Report...' : 'Generate Report'}
+          </button>
+        </form>
 
-      {errorMessage && <p className="error-message">{errorMessage}</p>}
+        {errorMessage && <p className="error-message">{errorMessage}</p>}
 
-      {sentimentReport.length > 0 && (
-        <div className="report-container">
-          {/* Filter Buttons */}
-          <div className="filter-buttons">
-            <button onClick={() => handleFilterChange('All')} className={`filter-btn ${filter === 'All' ? 'active' : ''}`}>All</button>
-            <button onClick={() => handleFilterChange('Positive')} className={`filter-btn ${filter === 'Positive' ? 'active' : ''}`}>Positive</button>
-            <button onClick={() => handleFilterChange('Negative')} className={`filter-btn ${filter === 'Negative' ? 'active' : ''}`}>Negative</button>
-            <button onClick={() => handleFilterChange('Neutral')} className={`filter-btn ${filter === 'Neutral' ? 'active' : ''}`}>Neutral</button>
-          </div>
-
-          <div className="chart-container">
-            {/* Display Bar Chart */}
-            <div className="chart">
-              <Bar data={chartData} options={{ responsive: true, maintainAspectRatio: false }} />
+        {sentimentReport.length > 0 && (
+          <div className="report-container">
+            <div className="filter-buttons">
+              <button onClick={() => handleFilterChange('All')} className={`filter-btn ${filter === 'All' ? 'active' : ''}`}>All</button>
+              <button onClick={() => handleFilterChange('Positive')} className={`filter-btn ${filter === 'Positive' ? 'active' : ''}`}>Positive</button>
+              <button onClick={() => handleFilterChange('Negative')} className={`filter-btn ${filter === 'Negative' ? 'active' : ''}`}>Negative</button>
+              <button onClick={() => handleFilterChange('Neutral')} className={`filter-btn ${filter === 'Neutral' ? 'active' : ''}`}>Neutral</button>
             </div>
-            {/* Display Pie Chart */}
-            <div className="pie-chart">
-              <Pie data={chartData} options={{ responsive: true, maintainAspectRatio: false }} />
+
+            <div className="charts-container">
+              <div className="chart">
+                <Bar data={chartData} options={{ responsive: true, maintainAspectRatio: false }} />
+              </div>
+              <div className="pie-chart">
+                <Pie data={chartData} options={{ responsive: true, maintainAspectRatio: false }} />
+              </div>
+            </div>
+
+            <div className="verdict-container">
+              <h3>Final Verdict: {finalVerdict}</h3>
+              <p>{detailedVerdict}</p>
+            </div>
+
+            <div className="sentiment-report">
+              <h2>Sentiment Report</h2>
+              <ul>
+                {filteredSentimentReport.map((item, index) => (
+                  <li key={index} className="report-item">
+                    <strong>{item.heading}</strong>
+                    <p>{item.combined_text}</p>
+                    <p>Sentiment: {item.sentiment}</p>
+                    <p>Polarity: {item.polarity}</p>
+                    <p>Subjectivity: {item.subjectivity}</p>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
-
-          <div className="verdict-container">
-            <h3>Final Verdict: {finalVerdict}</h3>
-            <p>{detailedVerdict}</p>
-          </div>
-
-          <div className="sentiment-report">
-            <h2>Sentiment Report</h2>
-            <ul>
-              {filteredSentimentReport.map((item, index) => (
-                <li key={index} className="report-item">
-                  <strong>{item.heading}</strong>
-                  <p>{item.combined_text}</p>
-                  <p>Sentiment: {item.sentiment}</p>
-                  <p>Polarity: {item.polarity}</p>
-                  <p>Subjectivity: {item.subjectivity}</p>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      )}
+        )}
+      </main>
     </div>
   );
 };
