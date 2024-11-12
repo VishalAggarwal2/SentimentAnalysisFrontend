@@ -160,3 +160,160 @@ body {
 .report-item p {
   margin: 5px 0;
 }
+
+/* Media Queries for Responsiveness */
+
+/* Small Screens (Phones) */
+@media (max-width: 600px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .title {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+
+  .theme-toggle {
+    margin-top: 10px;
+  }
+
+  .form {
+    width: 100%;
+    margin-bottom: 15px;
+  }
+
+  .textarea {
+    width: 90%;
+    max-width: 100%;
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  .submit-btn {
+    width: 90%;
+    font-size: 16px;
+  }
+
+  .charts-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .chart,
+  .pie-chart {
+    width: 80%;
+    height: 250px;
+  }
+
+  .filter-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .filter-btn {
+    margin: 5px 0;
+    width: 100%;
+    text-align: center;
+  }
+
+  .sentiment-report {
+    width: 100%;
+    padding: 10px;
+  }
+
+  .report-item {
+    padding: 10px;
+  }
+}
+
+/* Medium Screens (Tablets) */
+@media (min-width: 601px) and (max-width: 1024px) {
+  .header {
+    flex-direction: row;
+  }
+
+  .title {
+    font-size: 28px;
+  }
+
+  .theme-toggle {
+    margin-left: 20px;
+  }
+
+  .form {
+    width: 90%;
+  }
+
+  .textarea {
+    width: 85%;
+    font-size: 15px;
+  }
+
+  .submit-btn {
+    font-size: 17px;
+  }
+
+  .charts-container {
+    flex-direction: row;
+  }
+
+  .chart,
+  .pie-chart {
+    width: 45%;
+    height: 280px;
+  }
+
+  .filter-buttons {
+    justify-content: center;
+  }
+
+  .filter-btn {
+    width: auto;
+    margin: 0 10px;
+  }
+}
+
+/* Large Screens (Desktops) */
+@media (min-width: 1025px) {
+  .header {
+    flex-direction: row;
+  }
+
+  .title {
+    font-size: 32px;
+  }
+
+  .form {
+    width: 70%;
+  }
+
+  .textarea {
+    width: 70%;
+    font-size: 16px;
+  }
+
+  .submit-btn {
+    font-size: 18px;
+  }
+
+  .charts-container {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .chart,
+  .pie-chart {
+    width: 45%;
+    height: 300px;
+  }
+
+  .filter-buttons {
+    justify-content: center;
+  }
+
+  .filter-btn {
+    margin: 0 10px;
+  }
+}
